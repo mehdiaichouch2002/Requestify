@@ -51,7 +51,7 @@ class SuperAdminRegistrationController extends Controller
     public function store(UserRequest $request)
     {
         $nomPhoto = null;
-        if (isset($request->avatar)) {
+        if ($request->hasFile('avatar')) {
             // Generate a unique name for the uploaded avatar file
             $nomPhoto = $request->avatar->hashName();
             // Store the uploaded avatar file in the 'photos' directory

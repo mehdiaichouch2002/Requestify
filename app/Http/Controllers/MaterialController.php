@@ -19,7 +19,6 @@ class MaterialController extends Controller
     use StoresAttachments;
 
     private const LIMIT = 10;
-    private const PUBLIC_PATH = 'public/documents';
 
     /**
      * Display a listing of the materials.
@@ -112,7 +111,7 @@ class MaterialController extends Controller
     {
         $material = Material::findOrFail($id);
         if ($material->attached_file) {
-            Storage::delete(self::PUBLIC_PATH . '/' . $material->attached_file);
+            Storage::delete(self::ATTACHMENT_PATH . '/' . $material->attached_file);
         }
         $material->delete();
         return redirect()

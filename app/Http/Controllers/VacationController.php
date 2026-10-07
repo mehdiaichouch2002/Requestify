@@ -19,8 +19,6 @@ class VacationController extends Controller
     use DecidesRequests;
     use StoresAttachments;
 
-    private const PUBLIC_PATH = 'public/documents';
-
     /**
      * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
      */
@@ -78,7 +76,7 @@ class VacationController extends Controller
     {
         $vacation = Vacation::findOrFail($id);
         if ($vacation->attached_file) {
-            Storage::delete(self::PUBLIC_PATH . '/' . $vacation->attached_file);
+            Storage::delete(self::ATTACHMENT_PATH . '/' . $vacation->attached_file);
         }
         $vacation->delete();
         return redirect()->route('vacation-management.index')->with('success', $vacation->title . ' deleted successfully.');

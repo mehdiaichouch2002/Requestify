@@ -19,7 +19,6 @@ class DocumentController extends Controller
     use StoresAttachments;
 
     private const LIMIT = 10;
-    private const PUBLIC_PATH = 'public/documents';
     /**
      * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
      */
@@ -105,7 +104,7 @@ class DocumentController extends Controller
         $document = Document::findOrFail($id);
         if (isset($document->attached_files)){
             foreach (json_decode($document->attached_files) as $file){
-                Storage::delete(self::PUBLIC_PATH.'/'.$file);
+                Storage::delete(self::ATTACHMENT_PATH.'/'.$file);
             }
         }
         $document->delete();

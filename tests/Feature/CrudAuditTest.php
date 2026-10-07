@@ -86,6 +86,27 @@ class CrudAuditTest extends TestCase
         Mail::assertSentCount(5);
     }
 
+    public function test_a_concurrent_second_decision_is_refused(): void
+    {
+        $document = $this->requests()['document-management'];
+        $staleCopy = $document->fresh(); // read by a second request before the first one saved
+
+        $this->actingAs($this->admin)->patch(route('document-management.accept', $document->id));
+
+        $decider = new class {
+            use \App\Http\Controllers\Concerns\DecidesRequests;
+
+            public function run($request, int $status)
+            {
+                return $this->decide($request, $status, \App\Mail\DocumentStatusNotification::class, 'document-management.index', 'x');
+            }
+        };
+        $this->assertTrue($decider->run($staleCopy, 2)->getSession()->get('errors')->has('status'));
+
+        $this->assertSame(1, $document->fresh()->status);
+        Mail::assertSentCount(1);
+    }
+
     public function test_pages_still_work_after_the_requester_is_deleted(): void
     {
         $requests = $this->requests();
@@ -181,12 +202,24 @@ class CrudAuditTest extends TestCase
             'firstname' => 'Fatima-Zahra', 'lastname' => 'El Amrani', 'email' => 'fz@example.test',
             'role' => 'collaborator', 'phone' => '+212 612345678', 'sexe' => 'female',
             'dob' => '1995-04-02', 'job_title' => 'Accountant',
+            'avatar' => UploadedFile::fake()->image('fz.png'),
             'password' => 'secret-pass-1', 'password_confirmation' => 'secret-pass-1',
         ])->assertRedirect(route('user-management.index'));
 
         $user = User::where('email', 'fz@example.test')->sole();
         $this->assertSame('1995-04-02', $user->dob->toDateString());
         $this->assertSame('collaborator', $user->role);
+        $this->assertNotNull($user->avatar);
+        Storage::disk('local')->assertExists('public/photos/' . $user->avatar);
+    }
+
+    public function test_the_people_list_offers_no_delete_for_the_super_admin(): void
+    {
+        $superAdmin = User::factory()->superAdmin()->create();
+
+        $this->actingAs($this->admin)->get(route('user-management.index'))
+            ->assertSee("confirm-user-deletion-{$this->collaborator->id}')", false)
+            ->assertDontSee("confirm-user-deletion-{$superAdmin->id}')", false);
     }
 
     public function test_creating_a_user_requires_a_role(): void

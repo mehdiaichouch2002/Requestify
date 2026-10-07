@@ -27,8 +27,13 @@ trait DecidesRequests
             ])]);
         }
 
-        $request->status = $status;
-        $request->save();
+        // Only the first of two concurrent decisions (double click, two admins) gets
+        // past this conditional update; the other sees the stored decision instead
+        $updated = $request->newQuery()->whereKey($request->getKey())->where('status', 0)->update(['status' => $status]);
+        if ($updated === 0) {
+            return $this->decide($request->refresh(), $status, $mailable, $indexRoute, $label);
+        }
+        $request->refresh();
 
         // The decision is saved even if the mail server is down; the failure is logged
         if ($request->user?->email) {

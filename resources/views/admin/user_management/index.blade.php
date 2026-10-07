@@ -53,10 +53,10 @@
                                 <td class="px-4 py-2">{{ $item->email }}</td>
                                 <td class="px-4 py-2 flex items-center">
                                     <x-secondary-link href="{{ route('user-management.show', $item->id) }}" class="mx-2">{{ __('More info') }}</x-secondary-link>
-                                    @if (auth()->user()->id !== $item->id)
-                                    <x-danger-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion-{{ $item->id }}')" data-item-id="{{ $item->id }}">{{ __('Delete Account') }}</x-danger-button>
-                                    @else
+                                    @if (auth()->user()->id === $item->id)
                                     <h3 class="text-my-green mx-5 mt-1 ">(You)</h3>
+                                    @elseif (! $item->isSuperAdmin())
+                                    <x-danger-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion-{{ $item->id }}')" data-item-id="{{ $item->id }}">{{ __('Delete Account') }}</x-danger-button>
                                     @endif
                                 </td>
                             </tr>
