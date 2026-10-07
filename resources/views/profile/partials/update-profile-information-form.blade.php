@@ -73,7 +73,14 @@
         </div>
         <div>
             <x-input-label for="avatar" :value="__('Avatar')" />
-            <x-file-input  type="file" id="avatar" accept="image/*" name="avatar" type="file" class="mt-1 block w-full" />
+            <div class="mt-2 flex items-center gap-4">
+                <img id="avatar-preview" alt="{{ __('Avatar preview') }}"
+                     src="{{ $user->avatar ? asset('storage/photos/' . $user->avatar) : asset('assets/img/default-profile.jpg') }}"
+                     class="h-16 w-16 rounded-full object-cover ring-2 ring-line">
+                <x-file-input id="avatar" accept="image/png,image/jpeg" name="avatar" data-avatar-preview="#avatar-preview"
+                              class="block w-full text-sm text-ink-soft file:mr-3 file:rounded-lg file:border-0 file:bg-canvas file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-line" />
+            </div>
+            <p class="mt-1 text-xs text-ink-mute">{{ __('PNG or JPG, up to 1 MB. Saved when you press Save.') }}</p>
             <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
         </div>
 

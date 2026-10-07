@@ -32,6 +32,7 @@
                             </div>
                             <label for="attached_file"
                                 class="block mb-3 text-sm font-medium text-gray-700 dark:text-gray-400">{{ __('Attachment') }}</label>
+                            <div data-attachments>
                             <label
                                 class="flex justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none"
                                 id="file_drop_area">
@@ -46,10 +47,11 @@
                                         <span class="text-blue-600 underline">browse</span>
                                     </span>
                                 </span>
-                                <input id="file_upload" type="file" name="attached_file" class="hidden">
+                                <input id="file_upload" type="file" accept=".pdf,.doc,.docx,.rtf,.jpg,.jpeg,.png,image/*" name="attached_file" class="hidden">
                             </label>
                             <x-input-error :messages="$errors->get('attached_file')" class="mt-2" />
                             <ul id="file_list" class="mt-4"></ul>
+                            </div>
                             <div class="flex-grow"></div>
                         </div>
                         <div class="max-w-xl flex flex-col">
@@ -91,16 +93,4 @@
             </div>
         </div>
     </div>
-    <script>
-        const fileInput = document.getElementById('file_upload');
-        const fileList = document.getElementById('file_list');
-
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const listItem = document.createElement('li');
-            listItem.textContent = file.name;
-            fileList.innerHTML = '';
-            fileList.appendChild(listItem);
-        });
-    </script>
 </x-app-layout>

@@ -257,4 +257,18 @@ class CrudAuditTest extends TestCase
             }
         }
     }
+
+    public function test_detail_pages_preview_images_and_link_other_files(): void
+    {
+        $this->actingAs($this->collaborator)->post('/document-request', [
+            'type' => 'work certificate', 'title' => 'x', 'description' => 'x',
+            'attached_files' => [UploadedFile::fake()->image('id-card.png'), UploadedFile::fake()->create('contract.pdf', 5, 'application/pdf')],
+        ]);
+        [$image, $pdf] = json_decode(Document::sole()->attached_files);
+
+        $this->actingAs($this->admin)->get(route('document-management.show', Document::sole()->id))
+            ->assertOk()
+            ->assertSee('<img src="' . asset('storage/documents/' . $image) . '"', false)
+            ->assertSee('href="' . asset('storage/documents/' . $pdf) . '" download', false);
+    }
 }

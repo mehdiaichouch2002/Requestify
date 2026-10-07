@@ -123,9 +123,13 @@
         </div>
         <div class="grid md:grid-cols-2 md:gap-6">
             <div class="relative z-0 w-full mb-6 group">
-                <label for="avatar" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Profile Image</label>
-                <input type="file" accept="image/*" name="avatar"
-                       class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-dark dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"/>
+                <label for="avatar" class="block text-sm font-medium text-ink-soft">{{ __('Profile photo') }}</label>
+                <div class="mt-2 flex items-center gap-4">
+                    <img id="new-user-avatar" src="{{ asset('assets/img/default-profile.jpg') }}" alt="{{ __('Profile photo preview') }}"
+                         class="h-16 w-16 rounded-full object-cover ring-2 ring-line">
+                    <input type="file" id="avatar" accept="image/png,image/jpeg" name="avatar" data-avatar-preview="#new-user-avatar"
+                           class="block w-full text-sm text-ink-soft file:mr-3 file:rounded-lg file:border-0 file:bg-canvas file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink hover:file:bg-line"/>
+                </div>
                 <x-input-error :messages="$errors->get('avatar')" class="mt-2"/>
             </div>
         </div>
