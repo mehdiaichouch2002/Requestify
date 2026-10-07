@@ -11,15 +11,23 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['"IBM Plex Sans"', ...defaultTheme.fontFamily.sans],
+                display: ['Sora', '"IBM Plex Sans"', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                'my-blue': '#084356',
-                'my-red' : '#410505',
-                'my-light-red' : '#DC8A8A',
-                'my-light-blue' : '#89C6D8',
-                'my-green' : '#235112',
-                'my-light-green' : '#7FC682',
+                // Brand: the hex "M" mark (cyan -> indigo on deep navy)
+                navy: { DEFAULT: '#0A1628', 900: '#050C18', 800: '#0D1F38', 700: '#16294A', 600: '#22385F' },
+                canvas: '#EEF2F7',
+                line: '#DCE3EC',
+                ink: { DEFAULT: '#0F1F38', soft: '#4A5B73', mute: '#7A889C' },
+                brand: { cyan: '#22D3EE', DEFAULT: '#0891B2', dark: '#0E7490', indigo: '#6366F1', violet: '#818CF8' },
+                // Legacy names used across the views, remapped to the new palette
+                'my-blue': '#0F1F38',
+                'my-red' : '#B91C1C',
+                'my-light-red' : '#FEE2E2',
+                'my-light-blue' : '#D5F2F8',
+                'my-green' : '#047857',
+                'my-light-green' : '#D1FAE5',
             },
             width:{
                 'logo':'428px',

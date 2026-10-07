@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <x-secondary-link href="{{ url()->previous() !== url('/profile') ? url()->previous() : url('/') }}"
-                              class="mx-2">{{__('BACK')}}</x-secondary-link>
+                              class="mx-2">{{__('Back')}}</x-secondary-link>
             <a href="{{route('dashboard')}}">
           <img src="{{ asset('assets/img/logo.svg') }}" alt="Requestify" srcset="" class="float-right w-[90px] m-0 p-0">
             </a>

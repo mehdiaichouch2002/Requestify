@@ -35,7 +35,7 @@
         </div>
 
         <div>
-            <x-input-label for="dob" :value="__('Date of Birth')" />
+            <x-input-label for="dob" :value="__('Date of birth')" />
             <x-date-input id="dob" name="dob" class="mt-1 block w-full" :value="old('dob', date('Y-m-d', strtotime($user->dob)))"/>
             <x-input-error class="mt-2" :messages="$errors->get('dob')" />
         </div>

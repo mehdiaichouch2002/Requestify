@@ -18,9 +18,9 @@
 
     <div id="main" class="flex bg-gray flex-row bg-gray h-screen">
         <x-side />
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
+            <div class="rq-panel">
                 <div class="flex justify-between mb-10 items-center">
                     <x-title>{{ __('Request details') }}</x-title>
                     <div class="flex items-center">
@@ -36,17 +36,17 @@
                     <div class="grid md:grid-cols-2 md:gap-6 w-full">
                         <div class="relative z-0 w-full mb-6 group">
                             <div class="relative z-0 w-full mb-6 group">
-                                <x-title class="text-xl">{{ __('Full Name') }}</x-title>
+                                <x-field-label>{{ __('Name') }}</x-field-label>
                                 <div
-                                    class="block py-2.5 px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                    class="rq-value">
                                     {{ $material->user->firstname }} {{ $material->user->lastname }}
                                 </div>
                             </div>
                         </div>
                         <div class="relative z-0 w-full group">
-                            <x-title class="text-xl">{{ __('Title') }}</x-title>
+                            <x-field-label>{{ __('Title') }}</x-field-label>
                             <div
-                                class="block py-2.5 px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                class="rq-value">
                                 {{ $material->title }}
                             </div>
                         </div>
@@ -55,32 +55,18 @@
                 <div class="flex justify-between mb-6 items-center">
                     <div class="grid md:grid-cols-2 md:gap-6 w-full">
                         <div class="relative z-0 w-full mb-6 group">
-                            <x-title class="text-xl ">{{ __('Status') }}</x-title>
+                            <x-field-label>{{ __('Status') }}</x-field-label>
                             <div
-                                class="block py-2.5 px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                class="rq-value">
                                 <p class="text-gray-900">
-                                    @if ($material->status == 0)
-                                        <span
-                                            class="bg-yellow-100 text-yellow-800 text-base text-yellow-500 px-3.5 py-1.5 rounded-lg">
-                                            {{ __('Pending') }}
-                                        </span>
-                                    @elseif ($material->status == 1)
-                                        <span
-                                            class="bg-my-light-green text-my-green text-base text-my-green px-3.5 py-1.5 rounded-lg ">{{ __('Accepted') }}
-                                        </span>
-                                    @elseif ($material->status == 2)
-                                        <span
-                                            class="bg-my-light-red  text-my-red text-base text-my-red px-3.5 py-1.5 rounded-lg">
-                                            {{ __('Rejected') }}
-                                        </span>
-                                    @endif
+                                    <x-status :value="$material->status" />
                                 </p>
                             </div>
                         </div>
                         <div class="relative z-0 w-full group">
-                            <x-title class="text-xl">{{ __('Created At') }}</x-title>
+                            <x-field-label>{{ __('Sent on') }}</x-field-label>
                             <div
-                                class="block  py-2.5 px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                class="rq-value">
                                 {{ $material->created_at->format('l, F j, Y - H:i') }}
                             </div>
                         </div>
@@ -88,23 +74,23 @@
                 </div>
                 <div class="grid md:grid-cols-1 mb-10 w-full">
                     <div class="relative z-0 w-full group">
-                        <x-title class="text-xl ">{{ __('Specification') }}</x-title>
+                        <x-field-label>{{ __('Specification') }}</x-field-label>
                         <div
-                            class="py-2.5 font-bold px-0 w-full text-sm text-sky-800 border-0 border-b dark:border-my-light-blue break-words whitespace-normal">
+                            class="rq-value">
                             {{ $material->specification }}
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-between items-center">
                     <div class="relative z-0 w-full  group">
-                        <x-title class="text-xl ">{{ __('Attachements') }}</x-title>
+                        <x-field-label>{{ __('Attachments') }}</x-field-label>
                         <div
-                            class="block py-2.5 px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                            class="rq-value">
                             <table class="table-auto w-full">
                                 <tbody>
                                     @if ($material->attached_file)
                                         <tr>
-                                            <td class="px-4 py-2 text-sky-800 ">
+                                            <td class="rq-value">
                                                 <a href="{{ asset('storage/documents/' . $material->attached_file) }}"
                                                    target="_blank">
                                                     {{ $material->attached_file }}

@@ -2,10 +2,10 @@
 
         @csrf
         <div class="flex justify-between items-center">
-            <x-title>{{__('Add User')}}</x-title>
+            <x-title>{{__('Add a person')}}</x-title>
           <div class="mt-5">
               <x-secondary-link href="{{route('user-management.index')}}" class="mx-2">{{__('Back')}}</x-secondary-link>
-              <x-secondary-button  type="submit">{{__(('SAVE'))}}</x-secondary-button>
+              <x-secondary-button  type="submit">{{__('Save')}}</x-secondary-button>
                  </div>
           </div>
         <div class="grid md:grid-cols-2 md:gap-6">

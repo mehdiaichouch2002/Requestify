@@ -18,9 +18,9 @@
 
     <div id="main" class="flex bg-gray flex-row bg-gray h-screen">
         <x-side />
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
+            <div class="rq-panel">
                 <div class="flex justify-between mb-10 items-center">
                     <x-title>{{ __('Request details') }}</x-title>
                     <div class="flex items-center">
@@ -35,26 +35,26 @@
                 <div class="grid md:grid-cols-2 md:gap-6 w-full">
                     <div class="relative z-0 w-full mb-6 group">
                         <div class="relative z-0 w-full mb-6 group">
-                            <x-title class="text-xl">{{ __('Full Name') }}</x-title>
+                            <x-field-label>{{ __('Name') }}</x-field-label>
                             <div
-                                class="block py-2.5 px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                class="rq-value">
                                 {{ $homework->user->firstname }} {{ $homework->user->lastname }}
                             </div>
                         </div>
                     </div>
                     <div class="relative z-0 w-full group">
-                        <x-title class="text-xl ">{{ __('Is_Lifetime') }}</x-title>
+                        <x-field-label>{{ __('Permanent') }}</x-field-label>
                         <div
-                            class="block py-2.5 font-bold px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                            class="rq-value">
                             {{ $homework->is_lifetime ? 'yes' : 'no' }}
                         </div>
                     </div>
                 </div>
                 <div class="grid md:grid-cols-1 mb-10 w-full">
                     <div class="relative z-0 w-full group">
-                        <x-title class="text-xl">{{ __('Description') }}</x-title>
+                        <x-field-label>{{ __('Description') }}</x-field-label>
                         <div
-                            class="py-2.5 font-bold px-0 w-full text-sm text-sky-800 border-0 border-b dark:border-my-light-blue break-words whitespace-normal">
+                            class="rq-value">
                             {{ $homework->description }}
                         </div>
                     </div>
@@ -63,16 +63,16 @@
                     <div class="flex justify-between mb-6 items-center">
                         <div class="grid md:grid-cols-2 md:gap-6 w-full">
                             <div class="relative z-0 w-full mb-6 group">
-                                <x-title class="text-xl ">{{ __('FROM') }}</x-title>
+                                <x-field-label>{{ __('From') }}</x-field-label>
                                 <div
-                                    class="block py-2.5 font-bold px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                    class="rq-value">
                                     {{ $homework->from_date ? $homework->from_date->format('Y-m-d') : '-' }}
                                 </div>
                             </div>
                             <div class="relative z-0 w-full mb-6 group">
-                                <x-title class="text-xl ">{{ __('To') }}</x-title>
+                                <x-field-label>{{ __('To') }}</x-field-label>
                                 <div
-                                    class="block py-2.5 font-bold px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                    class="rq-value">
                                     {{ $homework->to_date ? $homework->to_date->format('Y-m-d') : '-' }}
                                 </div>
                             </div>
@@ -81,9 +81,9 @@
                     <div class="flex justify-between mb-6 items-center">
                         <div class="grid md:grid-cols-2 md:gap-6 w-full">
                             <div class="relative z-0 w-full mb-6 group">
-                                <x-title class="text-xl ">{{ __('Duration') }}</x-title>
+                                <x-field-label>{{ __('Duration') }}</x-field-label>
                                 <div
-                                    class="block py-2.5 font-bold px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                    class="rq-value">
                                     @php
                                         $from = strtotime($homework->from_date);
                                         $to = strtotime($homework->to_date);
@@ -99,25 +99,11 @@
                 <div class="flex justify-between mb-6 items-center">
                     <div class="grid md:grid-cols-2 md:gap-6 w-full">
                         <div class="relative z-0 w-full mb-6 group">
-                            <x-title class="text-xl">{{ __('Status') }}</x-title>
+                            <x-field-label>{{ __('Status') }}</x-field-label>
                             <div
-                                class="block py-2.5 px-0 w-full text-base text-sky-800 border-0 border-b dark:border-my-light-blue">
+                                class="rq-value">
                                 <p class="text-gray-900">
-                                    @if ($homework->status == 0)
-                                        <span
-                                            class="bg-yellow-100 text-yellow-800 text-base text-yellow-500 px-3.5 py-1.5 rounded-lg">
-                                            {{ __('Pending') }}
-                                        </span>
-                                    @elseif ($homework->status == 1)
-                                        <span
-                                            class="bg-my-light-green text-my-green text-base text-my-green px-3.5 py-1.5 rounded-lg ">{{ __('Accepted') }}
-                                        </span>
-                                    @elseif ($homework->status == 2)
-                                        <span
-                                            class="bg-my-light-red  text-my-red text-base text-my-red px-3.5 py-1.5 rounded-lg">
-                                            {{ __('Rejected') }}
-                                        </span>
-                                    @endif
+                                    <x-status :value="$homework->status" />
                                 </p>
                             </div>
                         </div>

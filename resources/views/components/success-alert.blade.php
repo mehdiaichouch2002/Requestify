@@ -1,23 +1,15 @@
 @props(['value'])
-<div class="bg-my-light-green text-my-green border border-green-400 text-green-700 mt-5 mb-3 px-4 py-3 rounded relative"
-         role="alert">
-        <span class="block sm:inline">{{$value}}</span>
-        <span class="absolute  top-0 bottom-0 right-0 px-4 py-3 close-button">
-    <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg"
-         viewBox="0 0 20 20">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-         class="w-6 h-6 text-my-green">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-</svg>
-    </svg>
-  </span>
-    </div>
-<script>
-    const closeButton = document.querySelector('.close-button');
-    const alert = document.querySelector('.bg-my-light-green');
-
-    closeButton.addEventListener('click', () => {
-        alert.classList.add('hidden');
-    });
-</script>
-
+<div x-data="{ show: true }" x-show="show" x-transition.opacity role="status"
+     class="mt-5 mb-3 flex items-start justify-between gap-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+    <span class="flex items-center gap-2">
+        <svg class="h-5 w-5 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ $value }}
+    </span>
+    <button type="button" @click="show = false" class="rounded p-0.5 text-emerald-700 hover:bg-emerald-100" aria-label="{{ __('Dismiss') }}">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>

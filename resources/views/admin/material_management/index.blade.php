@@ -1,11 +1,11 @@
 <x-app-layout>
     <div class="flex flex-row h-screen">
         <x-side />
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg  flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
+            <div class="rq-panel">
                 <div class="flex justify-between items-center">
-                    <h1 class="text-3xl font-bold text-my-blue">{{ __('LIST OF REQUESTS') }}</h1>
+                    <h1 class="text-3xl font-bold text-my-blue">{{ __('Requests') }}</h1>
                 </div>
                 @if (session()->has('success'))
                 <div class="w-[96%]">
@@ -16,11 +16,11 @@
                     <table class="w-full mt-9 pr-5 text-center text-black whitespace-nowrap">
                         <thead>
                             <tr>
-                                <th class="px-4 py-2">{{ __('ID') }}</th>
-                                <th class="px-4 py-2">{{ __('FULL NAME') }}</th>
-                                <th class="px-4 py-2">{{ __('TITLE') }}</th>
-                                <th class="px-4 py-2">{{ __('STATUS') }}</th>
-                                <th class="px-4 py-2">{{ __('ACTIONS') }}</th>
+                                <th class="px-4 py-2">{{ __('#') }}</th>
+                                <th class="px-4 py-2">{{ __('Name') }}</th>
+                                <th class="px-4 py-2">{{ __('Title') }}</th>
+                                <th class="px-4 py-2">{{ __('Status') }}</th>
+                                <th class="px-4 py-2">{{ __('') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -30,7 +30,7 @@
                                 <td class="px-4 py-2">{{ $item->user->firstname }} {{ $item->user->lastname }}</td>
                                 <td class="px-4 py-2">{{ $item->title }}</td>
                                 <td>
-                                    {{ StatusHelper::print($item->status) }}
+                                    <x-status :value="$item->status" />
                                 </td>
                                 <td class="px-4">
                                     <x-secondary-link href="{{ route('material-management.show', $item->id) }}">{{ __('View') }}</x-secondary-link>

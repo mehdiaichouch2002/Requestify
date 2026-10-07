@@ -1,11 +1,11 @@
 <x-app-layout>
     <div class="flex bg-gray flex-row bg-gray h-screen">
         <x-side />
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
+            <div class="rq-panel">
                 <div class="flex justify-between items-center">
-                    <x-title>{{ __('USER PROFILE') }}</x-title>
+                    <x-title>{{ __('Profile') }}</x-title>
                     <div class="flex items-center">
                         <x-secondary-link href="{{ url()->previous() }}"
                             class="mx-2">{{ __('Back') }}</x-secondary-link>
@@ -36,7 +36,7 @@
                     <div class="grid md:grid-cols-2 md:gap-6 w-full">
                         <div class="relative z-0 w-full mb-6 group">
                             <div class="relative z-0 w-full mb-6 group">
-                                <x-title class="text-xl mb-5">{{ __('Email Adresse') }}</x-title>
+                                <x-title class="text-xl mb-5">{{ __('Email address') }}</x-title>
                                 <div
                                     class="block py-2.5 px-0 w-full text-sm border-0 border-b dark:border-my-light-blue">
                                     <div class="flex items-center">
@@ -52,7 +52,7 @@
                             </div>
                         </div>
                         <div class="relative z-0 w-full mb-6 group">
-                            <x-title class="text-xl mb-5">{{ __('Phone Number') }}</x-title>
+                            <x-title class="text-xl mb-5">{{ __('Phone number') }}</x-title>
                             <div class="block py-2.5 px-0 w-full text-sm border-0 border-b dark:border-my-light-blue">
                                 <div class="flex items-center">
                                     <svg width="14" height="29" viewBox="0 0 14 29" fill="none"
@@ -76,7 +76,7 @@
                 <div class="flex justify-between items-center mt-5">
                     <div class="grid md:grid-cols-2 md:gap-6 w-full">
                         <div class="relative z-0 w-full mb-6 group">
-                            <x-title class="text-xl mb-5">{{ __('Date of Birth') }}</x-title>
+                            <x-title class="text-xl mb-5">{{ __('Date of birth') }}</x-title>
                             <div class="block py-2.5 px-0 w-full text-sm border-0 border-b dark:border-my-light-blue">
                                 <div class="flex items-center">
                                     <svg width="23" height="29" viewBox="0 0 23 29" fill="none"
@@ -100,7 +100,7 @@
                     </div>
                     @if (auth()->user()->id !== $user->id && $user->role !== 'super-admin')
                         <div class="relative z-0 w-full mb-6 group">
-                            <x-title class="text-xl mb-5">{{ __('Change Role') }}</x-title>
+                            <x-title class="text-xl mb-5">{{ __('Change role') }}</x-title>
                             <form method="post" action="{{ route('user-management.update', $user->id) }}"
                                 class="flex" id="role-form">
                                 @csrf
@@ -115,7 +115,7 @@
                                 </select>
                                 <div class="mt-4">
                                     <x-secondary-button type="submit" id="save-button"
-                                        disabled>{{ __('SAVE') }}</x-secondary-button>
+                                        disabled>{{ __('Save') }}</x-secondary-button>
                                 </div>
                             </form>
                         </div>

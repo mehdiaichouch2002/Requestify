@@ -1,185 +1,73 @@
+@php
+    $mine = collect()
+        ->merge($vacationPendings->map(fn ($r) => ['kind' => 'leave', 'what' => $r->title, 'r' => $r]))
+        ->merge($homeworkPendings->map(fn ($r) => ['kind' => 'remote', 'what' => $r->is_lifetime ? __('Permanent remote work') : \Illuminate\Support\Str::limit($r->description, 60), 'r' => $r]))
+        ->merge($documentPendings->map(fn ($r) => ['kind' => 'document', 'what' => $r->title, 'r' => $r]))
+        ->merge($materialPendings->map(fn ($r) => ['kind' => 'equipment', 'what' => $r->title, 'r' => $r]))
+        ->merge($evaluationPendings->map(fn ($r) => ['kind' => 'evaluation', 'what' => $r->title, 'r' => $r]))
+        ->sortByDesc(fn ($i) => $i['r']->updated_at)
+        ->values();
+
+    $shortcuts = [
+        ['leave', 'Leave', 'vacation-request.create'],
+        ['remote', 'Remote work', 'homework-request.create'],
+        ['document', 'A document', 'document-request.create'],
+        ['equipment', 'Equipment', 'material-request.create'],
+        ['evaluation', 'An evaluation', 'evaluation-request.create'],
+    ];
+@endphp
 <x-app-layout>
-    <div class="flex flex-row h-screen">
+    <div class="flex h-screen flex-row">
         <x-side2 />
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="flex-grow shadow-lg bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-3xl font-bold text-my-blue">{{ __('PENDING REQUESTS') }}</h1>
-                </div>
+            <div class="rq-panel">
+                <h1 class="text-2xl font-semibold text-ink sm:text-[1.75rem]">{{ __('What do you need?') }}</h1>
+
                 @if (session()->has('success'))
-                    <div>
-                        <x-success-alert :value="session()->get('success')" />
-                    </div>
-                @endif
-                @if (count($documentPendings) == 0 &&
-                        count($materialPendings) == 0 &&
-                        count($vacationPendings) == 0 &&
-                        count($homeworkPendings) == 0 &&
-                        count($evaluationPendings) == 0)
-                    <div class="flex text-xl mt-[80px] justify-center">
-                        <p class="text-my-blue">{{ __('No pending requests are available.') }}</p>
-                    </div>
-                @endif
-                @if (count($documentPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Document Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($documentPendings as $doc)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Title : ') . $doc->title }}</td>
-                                        <td class="py-1">{{ __('Type : ') . $doc->type }}</td>
-                                        <td class="flex justify-end py-1">
-                                            @if ($doc->status == 0)
-                                                <span
-                                                    class="bg-yellow-100 text-yellow-800 text-sm text-yellow-500 px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Pending') }}
-                                                </span>
-                                            @elseif ($doc->status == 1)
-                                                <span
-                                                    class="bg-my-light-green text-my-green text-sm text-my-green px-3.5 py-1.5 rounded-lg ">{{ __('Accepted') }}
-                                                </span>
-                                            @elseif ($doc->status == 2)
-                                                <span
-                                                    class="bg-my-light-red  text-my-red text-sm text-my-red px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Rejected') }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-                @if (count($materialPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Material Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($materialPendings as $mat)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Title : ') . $mat->title }}</td>
-                                        <td class="flex justify-end py-1">
-                                            @if ($mat->status == 0)
-                                                <span
-                                                    class="bg-yellow-100 text-yellow-800 text-sm text-yellow-500 px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Pending') }}
-                                                </span>
-                                            @elseif ($mat->status == 1)
-                                                <span
-                                                    class="bg-my-light-green text-my-green text-sm text-my-green px-3.5 py-1.5 rounded-lg ">{{ __('Accepted') }}
-                                                </span>
-                                            @elseif ($mat->status == 2)
-                                                <span
-                                                    class="bg-my-light-red  text-my-red text-sm text-my-red px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Rejected') }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-success-alert :value="session()->get('success')" />
                 @endif
 
-                @if (count($vacationPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Vacation Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($vacationPendings as $vacation)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Title : ') . $vacation->title }}</td>
-                                        <td class="flex justify-end py-1">
-                                            @if ($vacation->status == 0)
-                                                <span
-                                                    class="bg-yellow-100 text-yellow-800 text-sm text-yellow-500 px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Pending') }}
-                                                </span>
-                                            @elseif ($vacation->status == 1)
-                                                <span
-                                                    class="bg-my-light-green text-my-green text-sm text-my-green px-3.5 py-1.5 rounded-lg ">{{ __('Accepted') }}
-                                                </span>
-                                            @elseif ($vacation->status == 2)
-                                                <span
-                                                    class="bg-my-light-red  text-my-red text-sm text-my-red px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Rejected') }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+                    @foreach ($shortcuts as [$kind, $label, $route])
+                        <a href="{{ route($route) }}"
+                           class="group flex flex-col gap-3 rounded-xl border border-line px-4 py-4 transition-colors hover:border-brand hover:bg-brand-cyan/5">
+                            <x-request-kind :kind="$kind" class="font-medium text-ink" />
+                            <span class="text-xs text-ink-mute group-hover:text-brand-dark">{{ __('New request') }}</span>
+                        </a>
+                    @endforeach
+                </div>
+
+                <div class="mt-12 flex items-end justify-between gap-4">
+                    <div>
+                        <h2 class="font-display text-lg font-semibold text-ink">{{ __('Your requests') }}</h2>
+                        <p class="text-sm text-ink-mute">{{ __('Pending ones, and decisions from the last 7 days.') }}</p>
                     </div>
-                @endif
-                @if (count($homeworkPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Homework Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($homeworkPendings as $homework)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Description : ') . substr($homework->description,0,20) }}...</td>
-                                        <td class="flex justify-end py-1">
-                                            @if ($homework->status == 0)
-                                                <span
-                                                    class="bg-yellow-100 text-yellow-800 text-sm text-yellow-500 px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Pending') }}
-                                                </span>
-                                            @elseif ($homework->status == 1)
-                                                <span
-                                                    class="bg-my-light-green text-my-green text-sm text-my-green px-3.5 py-1.5 rounded-lg ">{{ __('Accepted') }}
-                                                </span>
-                                            @elseif ($homework->status == 2)
-                                                <span
-                                                    class="bg-my-light-red  text-my-red text-sm text-my-red px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Rejected') }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-                @if (count($evaluationPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Evaluation Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($evaluationPendings as $evaluation)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Description : ') . substr($evaluation->description,0,20) }}...</td>
-                                        <td class="flex justify-end py-1">
-                                            @if ($evaluation->status == 0)
-                                                <span
-                                                    class="bg-yellow-100 text-yellow-800 text-sm text-yellow-500 px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Pending') }}
-                                                </span>
-                                            @elseif ($evaluation->status == 1)
-                                                <span
-                                                    class="bg-my-light-green text-my-green text-sm text-my-green px-3.5 py-1.5 rounded-lg ">{{ __('Accepted') }}
-                                                </span>
-                                            @elseif ($evaluation->status == 2)
-                                                <span
-                                                    class="bg-my-light-red  text-my-red text-sm text-my-red px-3.5 py-1.5 rounded-lg">
-                                                    {{ __('Rejected') }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    <a href="{{ route('collaborator-history') }}" class="text-sm font-medium text-brand-dark hover:underline">{{ __('Full history') }}</a>
+                </div>
+
+                @if ($mine->isEmpty())
+                    <p class="mt-6 rounded-xl bg-canvas px-5 py-6 text-sm text-ink-soft">
+                        {{ __('No open requests. Choose a type above to send one; you will be emailed when HR decides.') }}
+                    </p>
+                @else
+                    <ul class="mt-4 divide-y divide-line border-y border-line">
+                        @foreach ($mine as $item)
+                            <li class="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-1 py-4 sm:grid-cols-[11rem_1fr_9rem_auto] sm:px-3">
+                                <x-request-kind :kind="$item['kind']" class="hidden sm:inline-flex" />
+                                <span class="min-w-0">
+                                    <span class="block truncate font-medium text-ink">{{ $item['what'] }}</span>
+                                    <span class="block text-xs text-ink-mute sm:hidden">{{ __(['leave' => 'Leave', 'remote' => 'Remote work', 'document' => 'Document', 'equipment' => 'Equipment', 'evaluation' => 'Evaluation'][$item['kind']]) }}</span>
+                                </span>
+                                <span class="hidden text-sm text-ink-mute sm:block">
+                                    {{ $item['r']->status == 0 ? __('Sent :time', ['time' => $item['r']->created_at->diffForHumans()]) : __('Decided :time', ['time' => $item['r']->updated_at->diffForHumans()]) }}
+                                </span>
+                                <x-status :value="$item['r']->status" />
+                            </li>
+                        @endforeach
+                    </ul>
                 @endif
             </div>
-
         </div>
     </div>
 </x-app-layout>

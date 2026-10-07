@@ -2,3 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    body {
+        @apply bg-canvas text-ink;
+    }
+
+    h1, h2, h3 {
+        @apply font-display tracking-tight;
+    }
+
+    :focus-visible {
+        @apply outline-none ring-2 ring-brand-cyan ring-offset-2 ring-offset-white;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+@layer components {
+    /* The white working surface next to the sidebar, on every page */
+    .rq-panel {
+        @apply flex-grow overflow-y-auto bg-white rounded-tl-2xl border-l border-t border-line
+               px-6 py-8 sm:px-10 lg:px-12 mt-4 ml-0 lg:ml-6;
+    }
+
+    .rq-panel h1.text-3xl {
+        @apply text-2xl sm:text-[1.75rem] font-semibold text-ink;
+    }
+
+    /* Data tables (lists, history) */
+    .rq-panel table {
+        @apply w-full text-sm text-ink;
+    }
+    .rq-panel thead th {
+        @apply text-left text-xs font-medium text-ink-mute pb-3 px-4 border-b border-line whitespace-nowrap;
+    }
+    .rq-panel tbody tr {
+        @apply border-b border-line/70;
+    }
+    .rq-panel tbody tr:hover {
+        @apply bg-canvas/60;
+    }
+    .rq-panel tbody td {
+        @apply py-3 px-4 align-middle;
+    }
+
+    /* Floating-label inputs used in the request forms */
+    .rq-panel input.peer {
+        @apply border-0 border-b border-line text-ink text-[0.95rem] bg-transparent
+               focus:border-brand focus:ring-0;
+    }
+    .rq-panel input.peer ~ label {
+        @apply text-ink-mute;
+    }
+    .rq-panel input.peer:focus ~ label {
+        @apply text-brand-dark;
+    }
+    .rq-panel textarea,
+    .rq-panel select {
+        @apply rounded-lg border-line text-ink text-[0.95rem] focus:border-brand focus:ring-brand/30;
+    }
+    .rq-panel label.block {
+        @apply text-ink-soft font-medium;
+    }
+
+    /* Attachment drop zones */
+    #file_drop_area {
+        @apply border-line bg-canvas/50 rounded-xl hover:border-brand hover:bg-brand-cyan/5 transition-colors;
+    }
+    #file_drop_area .text-blue-600 {
+        @apply text-brand-dark;
+    }
+
+    /* Status pill: the brand's hexagon as its marker */
+    .rq-status {
+        @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap;
+    }
+    .rq-status::before {
+        content: '';
+        @apply inline-block h-2 w-2 bg-current;
+        clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    }
+    .rq-status--pending  { @apply bg-amber-50 text-amber-700 ring-1 ring-amber-200; }
+    .rq-status--accepted { @apply bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200; }
+    .rq-status--rejected { @apply bg-red-50 text-red-700 ring-1 ring-red-200; }
+}
+
+@layer components {
+    /* Read-only values on request detail pages */
+    .rq-value {
+        @apply mt-1 block border-b border-line pb-3 text-[0.95rem] text-ink;
+    }
+}

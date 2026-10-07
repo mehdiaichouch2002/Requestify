@@ -1,125 +1,65 @@
+@php
+    $person = fn ($r) => $r->user ? $r->user->firstname . ' ' . $r->user->lastname : __('Former employee');
+    $queue = collect()
+        ->merge($vacationPendings->map(fn ($r) => ['kind' => 'leave', 'who' => $person($r), 'what' => $r->title, 'at' => $r->created_at, 'url' => route('vacation-management.show', $r->id)]))
+        ->merge($homeworkPendings->map(fn ($r) => ['kind' => 'remote', 'who' => $person($r), 'what' => $r->is_lifetime ? __('Permanent remote work') : \Illuminate\Support\Str::limit($r->description, 60), 'at' => $r->created_at, 'url' => route('homework-management.show', $r->id)]))
+        ->merge($documentPendings->map(fn ($r) => ['kind' => 'document', 'who' => $person($r), 'what' => ucfirst($r->type), 'at' => $r->created_at, 'url' => route('document-management.show', $r->id)]))
+        ->merge($materialPendings->map(fn ($r) => ['kind' => 'equipment', 'who' => $person($r), 'what' => $r->title, 'at' => $r->created_at, 'url' => route('material-management.show', $r->id)]))
+        ->merge($evaluationPendings->map(fn ($r) => ['kind' => 'evaluation', 'who' => $person($r), 'what' => $r->title, 'at' => $r->created_at, 'url' => route('evaluation-management.show', $r->id)]))
+        ->sortBy('at')
+        ->values();
+    $oldest = $queue->first();
+@endphp
 <x-app-layout>
-    <div class="flex flex-row h-screen">
+    <div class="flex h-screen flex-row">
         <x-side />
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg  flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
-                <div class="flex justify-between items-center">
-                    <h1 class="text-3xl font-bold text-my-blue">{{ __('PENDING REQUESTS') }}</h1>
+            <div class="rq-panel">
+                <div class="flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl font-semibold text-ink sm:text-[1.75rem]">{{ __('Waiting for a decision') }}</h1>
+                        <p class="mt-1 text-sm text-ink-mute">
+                            @if ($queue->isEmpty())
+                                {{ __('Nothing is waiting. New requests appear here as soon as they are sent.') }}
+                            @else
+                                {{ trans_choice(':count request, oldest first.|:count requests, oldest first.', $queue->count()) }}
+                                {{ __('The oldest was sent :time.', ['time' => $oldest['at']->diffForHumans()]) }}
+                            @endif
+                        </p>
+                    </div>
+                    <a href="{{ route('admin-history') }}" class="text-sm font-medium text-brand-dark hover:underline">{{ __('See all decisions') }}</a>
                 </div>
-                @if (count($documentPendings) == 0 &&
-                        count($evaluationPendings) == 0 &&
-                        count($materialPendings) == 0 &&
-                        count($vacationPendings) == 0 &&
-                        count($homeworkPendings) == 0)
-                    <div class="flex text-xl mt-[80px] justify-center">
-                        <p class="text-my-blue">{{ __('No pending requests are available.') }}</p>
-                    </div>
-                @endif
-                @if (count($documentPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Document Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($documentPendings as $doc)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Request By : ') . $doc->user->firstname }}
-                                            {{ $doc->user->lastname }}</td>
-                                        <td class="py-1">{{ __('Type : ') . $doc->type }}</td>
-                                        <td class="flex justify-end py-1">
-                                            <x-secondary-link href="{{ route('document-management.show', $doc->id) }}"
-                                                class="mx-2">{{ __('View') }}</x-secondary-link>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-                @if (count($materialPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Material Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($materialPendings as $mat)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Request By : ') . $mat->user->firstname }}
-                                            {{ $mat->user->lastname }}</td>
-                                        <td class="flex justify-end py-1">
-                                            <x-secondary-link href="{{ route('material-management.show', $mat->id) }}"
-                                                class="mx-2">{{ __('View') }}</x-secondary-link>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+
+                @if (session()->has('success'))
+                    <x-success-alert :value="session()->get('success')" />
                 @endif
 
-                @if (count($vacationPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Vacation Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($vacationPendings as $vacation)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Request By : ') . $vacation->user->firstname }}
-                                            {{ $vacation->user->lastname }}</td>
-                                        <td class="py-1">{{ __('Title : ') . $vacation->title }}</td>
-                                        <td class="flex justify-end py-1">
-                                            <x-secondary-link
-                                                href="{{ route('vacation-management.show', $vacation->id) }}"
-                                                class="mx-2">{{ __('View') }}</x-secondary-link>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-                @if (count($homeworkPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Homework Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($homeworkPendings as $homework)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Request By : ') . $homework->user->firstname }}
-                                            {{ $homework->user->lastname }}</td>
-                                        <td class="py-1">
-                                            {{ __('Description : ') . substr($homework->description, 0, 20) }}...</td>
-                                        <td class="flex justify-end py-1">
-                                            <x-secondary-link
-                                                href="{{ route('homework-management.show', $homework->id) }}"
-                                                class="mx-2">{{ __('View') }}</x-secondary-link>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-
-                @if (count($evaluationPendings) > 0)
-                    <div class="grid mt-10">
-                        <h1 class="text-md font-bold text-my-blue mb-2">{{ __('Evaluation Requests') }}</h1>
-                        <table class="text-my-blue">
-                            <tbody>
-                                @foreach ($evaluationPendings as $evaluation)
-                                    <tr class="border-t border-b border-my-light-blue">
-                                        <td class="py-1">{{ __('Request By : ') . $evaluation->user->firstname }}
-                                            {{ $evaluation->user->lastname }}</td>
-                                        <td class="py-1">
-                                            {{ __('Description : ') . substr($evaluation->description, 0, 20) }}...</td>
-                                        <td class="flex justify-end py-1">
-                                            <x-secondary-link
-                                                href="{{ route('evaluation-management.show', $evaluation->id) }}"
-                                                class="mx-2">{{ __('View') }}</x-secondary-link>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                @if ($queue->isNotEmpty())
+                    <ul class="mt-8 divide-y divide-line border-y border-line">
+                        @foreach ($queue as $item)
+                            <li>
+                                <a href="{{ $item['url'] }}" class="group grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-1 px-1 py-4 hover:bg-canvas/60 sm:grid-cols-[11rem_1fr_9rem_auto] sm:px-3">
+                                    <x-request-kind :kind="$item['kind']" class="row-span-2 sm:row-span-1" />
+                                    <span class="min-w-0">
+                                        <span class="block truncate font-medium text-ink">{{ $item['who'] }}</span>
+                                        <span class="block truncate text-sm text-ink-mute">{{ $item['what'] }}</span>
+                                    </span>
+                                    <span class="col-start-2 text-xs text-ink-mute sm:col-start-auto sm:text-sm">
+                                        {{ __('Sent :time', ['time' => $item['at']->diffForHumans()]) }}
+                                    </span>
+                                    <span class="row-span-2 row-start-1 col-start-3 text-sm font-medium text-brand-dark group-hover:underline sm:col-start-auto sm:row-auto sm:row-span-1">
+                                        {{ __('Review') }}
+                                    </span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <div class="mt-16 flex flex-col items-center text-center">
+                        <img src="{{ asset('favicon.svg') }}" alt="" class="h-14 w-14 opacity-90">
+                        <p class="mt-4 font-display text-lg font-semibold text-ink">{{ __('Queue is clear') }}</p>
+                        <p class="mt-1 max-w-sm text-sm text-ink-mute">{{ __('Every request has an answer. Collaborators were emailed each decision.') }}</p>
                     </div>
                 @endif
             </div>

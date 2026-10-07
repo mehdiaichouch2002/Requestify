@@ -1,11 +1,11 @@
 <x-app-layout>
     <div class="flex flex-row h-screen">
         <x-side />
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
+            <div class="rq-panel">
                 <div class="flex justify-between items-center">
-                    <h1 class="text-3xl font-bold text-my-blue">{{ __('LIST OF VACATION') }}</h1>
+                    <h1 class="text-3xl font-bold text-my-blue">{{ __('Leave requests') }}</h1>
                 </div>
 
                 @if (session()->has('success'))
@@ -17,13 +17,13 @@
                     <table class="w-full mt-9 pr-5 text-left text-black whitespace-nowrap">
                         <thead>
                             <tr>
-                                <th class="px-4 py-2">{{ __('ID') }}</th>
-                                <th class="px-4 py-2">{{ __('COLLABORATOR') }}</th>
-                                <th class="px-4 py-2">{{ __('FROM') }}</th>
-                                <th class="px-4 py-2">{{ __('TO') }}</th>
-                                <th class="px-4 py-2">{{ __('DURATION') }}</th>
-                                <th class="px-4 py-2">{{ __('STATUS') }}</th>
-                                <th class="px-4 py-2">{{ __('ACTION') }}</th>
+                                <th class="px-4 py-2">{{ __('#') }}</th>
+                                <th class="px-4 py-2">{{ __('Collaborator') }}</th>
+                                <th class="px-4 py-2">{{ __('From') }}</th>
+                                <th class="px-4 py-2">{{ __('To') }}</th>
+                                <th class="px-4 py-2">{{ __('Duration') }}</th>
+                                <th class="px-4 py-2">{{ __('Status') }}</th>
+                                <th class="px-4 py-2">{{ __('') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -44,7 +44,7 @@
                                 </td>
 
                                 <td>
-                                    {{ StatusHelper::print($item->status) }}
+                                    <x-status :value="$item->status" />
                                 </td>
 
                                 <td class="py-2 flex items-center">

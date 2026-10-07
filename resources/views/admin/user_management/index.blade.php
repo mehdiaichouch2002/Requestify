@@ -2,11 +2,11 @@
     <div class="flex flex-row h-screen">
         <x-side />
 
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
+            <div class="rq-panel">
                 <div class="flex justify-between items-center">
-                    <h1 class="text-3xl font-bold text-my-blue">{{ __('LIST OF USERS') }}</h1>
+                    <h1 class="text-3xl font-bold text-my-blue">{{ __('People') }}</h1>
                     <div class="flex items-center">
                         <button class="text-my-blue hover:text-my-light-blue" id="search-button">
                             <svg class="h-5 w-5" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -16,7 +16,7 @@
                             </svg>
                             <span class="sr-only">Search</span>
                         </button>
-                        <x-secondary-link href="{{ route('user-management.create') }}" class="mx-12">{{ __('ADD USER') }}</x-secondary-link>
+                        <x-secondary-link href="{{ route('user-management.create') }}" class="mx-12">{{ __('Add a person') }}</x-secondary-link>
                     </div>
 
                 </div>
@@ -36,8 +36,8 @@
                         <thead>
                             <tr>
                                 <th class="px-4 py-2">ID</th>
-                                <th class="px-4 py-2">FIRST NAME</th>
-                                <th class="px-4 py-2">LAST NAME</th>
+                                <th class="px-4 py-2">{{ __('First name') }}</th>
+                                <th class="px-4 py-2">{{ __('Last name') }}</th>
                                 <th class="px-4 py-2">Role</th>
                                 <th class="px-4 py-2">Email</th>
                                 <th class="px-4 py-2">Actions</th>

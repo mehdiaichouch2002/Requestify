@@ -2,9 +2,9 @@
     <div class="flex flex-row h-screen">
         <x-side />
 
-        <div class="flex flex-col w-full relative">
+        <div class="flex min-w-0 flex-1 flex-col">
             <x-nav />
-            <div class="shadow-lg flex-grow bg-white p-10 ml-[40px] mt-[50px] overflow-y-auto">
+            <div class="rq-panel">
                 <x-add-user />
             </div>
         </div>
