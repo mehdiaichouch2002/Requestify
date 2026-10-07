@@ -8,7 +8,7 @@
         @csrf
         <div class="max-w-440px sm:rounded-lg mx-auto my-11 px-4 sm:px-6 lg:px-8">
             <div>
-                <img src="{{ asset('/assets/img/logo.png')}}" alt="" class="w-9/12 mx-auto ">
+                <img src="{{ asset('/assets/img/logo.svg') }}" alt="Requestify" class="w-9/12 mx-auto ">
             </div>
             <div class="focus:ring-indigo-500 text-blue-400 p-8  text-center text-xl">
                 <h1>Reset your password</h1>

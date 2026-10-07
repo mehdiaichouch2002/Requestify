@@ -8,7 +8,7 @@
         @csrf
         <div class="max-w-440px sm:rounded-lg m-auto mx-lo mt-11 px-50px">
             <div>
-                <img src="{{ URL::to('/assets/img/logo.png')}}" alt="" class="w-9/12 m-auto px-11">
+                <img src="{{ asset('/assets/img/logo.svg') }}" alt="Requestify" class="w-9/12 m-auto px-11">
             </div>
 
             <div class="focus:ring-indigo-500 text-blue-400 pt-11 pb-8 pl-28 text-xl">

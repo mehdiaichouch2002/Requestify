@@ -79,7 +79,7 @@
 </head>
 <body>
 <div class="container">
-    <img src="{{ asset('assets/img/logo.png') }}" alt="Company Logo" class="logo">
+    <img src="{{ asset('assets/img/logo.png') }}" alt="Requestify" class="logo">
 
 
     <h1>Evaluation Request Status Notification</h1>
@@ -95,7 +95,7 @@
     </p>
 
     <p class="footer">Thank you.<br>
-        This email was sent by <a href="" target="_blank">Morocommerce</a>.</p>
+        This email was sent by <a href="" target="_blank">Requestify</a>.</p>
 </div>
 </body>
 </html>

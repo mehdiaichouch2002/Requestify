@@ -8,7 +8,7 @@
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
         <div class="max-w-440px sm:rounded-lg pb-5 mt-11 px-50px">
             <div>
-                <img src="{{ asset('/assets/img/logo.png') }}" alt="" class="w-9/12 m-auto px-11">
+                <img src="{{ asset('/assets/img/logo.svg') }}" alt="Requestify" class="w-9/12 m-auto px-11">
             </div>
             <div class="focus:ring-indigo-500 text-blue-400 p-8  text-center text-xl">
                 <h1>Reset your password</h1>

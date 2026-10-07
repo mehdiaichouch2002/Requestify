@@ -1,6 +1,6 @@
 <div class="bg-white shadow-lg w-[340px] flex flex-col h-full">
     <div class="flex justify-center items-center">
-        <img src="{{ asset('/assets/img/logo.png')}}" alt="" class="w-32 mt-5 mb-4">
+        <img src="{{ asset('/assets/img/logo.svg') }}" alt="Requestify" class="w-32 mt-5 mb-4">
     </div>
     <ul class="flex h-full flex-col gap-y-2 px-2 mt-2">
         <li>
