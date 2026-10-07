@@ -34,13 +34,7 @@
                                 <td class="px-4 py-2">{{ date('Y-m-d', strtotime($item->from)) }}</td>
                                 <td class="px-4 py-2">{{ date('Y-m-d', strtotime($item->to)) }}</td>
                                 <td class="px-4 py-2">
-                                    @php
-                                    $from = strtotime($item->from);
-                                    $to = strtotime($item->to);
-                                    $duration = $to - $from;
-                                    $days = floor($duration / (60 * 60 * 24));
-                                    @endphp
-                                    {{ $days }}{{ $days > 1 ? ' days' : __(' day') }}
+                                    {{ trans_choice(':count day|:count days', $item->days()) }}
                                 </td>
 
                                 <td>

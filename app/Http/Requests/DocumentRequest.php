@@ -27,7 +27,7 @@ class DocumentRequest extends FormRequest
             'title' => 'required',
             'description' => 'required',
             'attached_files' => 'array',
-            'attached_files.*' => 'file|mimes:pdf,doc,rtf,docx,jpeg,png,jpg|max:2048',
+            'attached_files.*' => 'file|mimes:pdf,doc,docx,rtf,jpeg,png,jpg|max:2048',
             ];
     }
 }

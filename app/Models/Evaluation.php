@@ -35,6 +35,7 @@ class Evaluation extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        // Keep showing requests from people who were since removed (users are soft-deleted)
+        return $this->belongsTo(User::class)->withTrashed();
     }
 }

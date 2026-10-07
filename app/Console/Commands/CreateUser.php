@@ -40,8 +40,8 @@ class CreateUser extends Command
             'password' => $password,
             'password_confirmation' => $confirmPassword,
         ], [
-            'firstname' => 'required|string|min:3|max:30|regex:/^[a-zA-Z]+$/',
-            'lastname' => 'required|string|min:3|max:30|regex:/^[a-zA-Z]+$/',
+            'firstname' => ['required', 'string', 'min:2', 'max:30', "regex:/^[\pL][\pL\s'\-]*$/u"],
+            'lastname' => ['required', 'string', 'min:2', 'max:30', "regex:/^[\pL][\pL\s'\-]*$/u"],
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
         ]);

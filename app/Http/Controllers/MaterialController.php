@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\DocumentStatusNotification;
+use App\Http\Controllers\Concerns\DecidesRequests;
+use App\Http\Controllers\Concerns\StoresAttachments;
 use App\Mail\MaterialStatusNotification;
 use App\Models\Material;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Illuminate\Contracts\View\Factory;
@@ -15,6 +15,9 @@ use Illuminate\Contracts\Foundation\Application;
 
 class MaterialController extends Controller
 {
+    use DecidesRequests;
+    use StoresAttachments;
+
     private const LIMIT = 10;
     private const PUBLIC_PATH = 'public/documents';
 
@@ -48,13 +51,8 @@ class MaterialController extends Controller
     public function accept($id): RedirectResponse
     {
         $material = Material::findOrFail($id);
-        $material->status = 1;
-        $material->save();
 
-        // Send notification email
-        Mail::to($material->user->email)->send(new MaterialStatusNotification($material, 1));
-
-        return redirect()->route('material-management.index')->with('success', 'Material ' . $material->title . ' ' . ($material->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($material, self::ACCEPTED, MaterialStatusNotification::class, 'material-management.index', __('Equipment request') . ' "' . $material->title . '"');
     }
 
     /**
@@ -64,13 +62,8 @@ class MaterialController extends Controller
     public function reject($id): RedirectResponse
     {
         $material = Material::findOrFail($id);
-        $material->status = 2;
-        $material->save();
 
-        // Send notification email
-        Mail::to($material->user->email)->send(new MaterialStatusNotification($material, 2));
-
-        return redirect()->route('material-management.index')->with('success', 'Material ' . $material->title . ' ' . ($material->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($material, self::REJECTED, MaterialStatusNotification::class, 'material-management.index', __('Equipment request') . ' "' . $material->title . '"');
     }
 
     /**
@@ -82,22 +75,13 @@ class MaterialController extends Controller
         $request->validate([
             'title' => 'required|string',
             'specification' => 'required|string',
-            'attached_file' => 'nullable|file|max:2048', // Assuming maximum file size is 2MB
+            'attached_file' => 'nullable|file|mimes:' . self::ATTACHMENT_MIMES . '|max:2048',
         ]);
 
         $attachedFile = null;
 
         if ($request->hasFile('attached_file')) {
-            $file = $request->file('attached_file');
-            $timestamp = time();
-            $extension = $file->getClientOriginalExtension();
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-            // Limit the filename length to 30 characters
-            $maxLength = 30;
-            $filename = substr($originalName, 0, $maxLength - strlen($timestamp) - strlen($extension) - 1);
-            $filename = $filename . '_' . $timestamp . '.' . $extension;
-            $file->storeAs(self::PUBLIC_PATH, $filename);
-            $attachedFile = $filename;
+            $attachedFile = $this->storeAttachment($request->file('attached_file'));
         }
 
         $material = Material::create([

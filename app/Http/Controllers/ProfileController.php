@@ -64,6 +64,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // The super admin is the only account that can't be recreated from the app
+        if ($user->isSuperAdmin()) {
+            return back()->withErrors(['password' => __('The super admin account cannot be deleted.')], 'userDeletion');
+        }
+
         Auth::logout();
 
         $user->delete();

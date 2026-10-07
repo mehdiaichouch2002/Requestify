@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\DecidesRequests;
 use App\Mail\HomeworkStatusNotification;
 use App\Models\Homework;
 use Illuminate\Http\Request;
@@ -10,11 +11,12 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application as FoundationApplication;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class HomeworkController extends Controller
 {
+    use DecidesRequests;
+
     public function index()
     {
         $data = Homework::all();
@@ -42,7 +44,7 @@ class HomeworkController extends Controller
       ];
     }else{
           $rules['description'] = ['required'];
-          $rules['from_date'] = ['required', 'date'];
+          $rules['from_date'] = ['required', 'date', 'after_or_equal:today'];
           $rules['to_date'] = ['required', 'date', 'after:from_date'];
       }
 
@@ -85,13 +87,8 @@ class HomeworkController extends Controller
     public function accept($id): RedirectResponse
     {
         $homework = Homework::findOrFail($id);
-        $homework->status = 1;
-        $homework->save();
 
-        // Send notification email
-        Mail::to($homework->user->email)->send(new HomeworkStatusNotification($homework, 1));
-
-        return redirect()->route('homework-management.index')->with('success', 'Remote work request ' . ($homework->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($homework, self::ACCEPTED, HomeworkStatusNotification::class, 'homework-management.index', __('Remote work request'));
     }
 
     /**
@@ -101,13 +98,8 @@ class HomeworkController extends Controller
     public function reject($id): RedirectResponse
     {
         $homework = Homework::findOrFail($id);
-        $homework->status = 2;
-        $homework->save();
 
-        // Send notification email
-        Mail::to($homework->user->email)->send(new HomeworkStatusNotification($homework, 2));
-
-        return redirect()->route('homework-management.index')->with('success', 'Remote work request ' . ($homework->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($homework, self::REJECTED, HomeworkStatusNotification::class, 'homework-management.index', __('Remote work request'));
     }
     }
 

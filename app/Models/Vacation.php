@@ -25,12 +25,22 @@ class Vacation extends Model
         'user_id',
 
     ];
-    protected $casts=[
-        'from',
-        'to',
-      ];
+    protected $casts = [
+        'from' => 'date',
+        'to' => 'date',
+        'paid' => 'boolean',
+    ];
+
+    /**
+     * Calendar days covered by the leave, counting both the first and the last day.
+     */
+    public function days(): int
+    {
+        return $this->from->diffInDays($this->to ?? $this->from) + 1;
+    }
       public function user(){
-        return $this->belongsTo(User::class);
+        // Keep showing requests from people who were since removed (users are soft-deleted)
+        return $this->belongsTo(User::class)->withTrashed();
       }
 
 

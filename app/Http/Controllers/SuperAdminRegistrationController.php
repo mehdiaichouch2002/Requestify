@@ -64,6 +64,7 @@ class SuperAdminRegistrationController extends Controller
             'lastname' => $request->lastname,
             'role' => $request->role,
             'sexe'=>$request->sexe,
+            'dob'=>$request->dob,
             'phone'=>$request->phone,
             'job_title' => $request->job_title,
             'avatar' => $nomPhoto,

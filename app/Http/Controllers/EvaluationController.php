@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\DecidesRequests;
 use App\Mail\EvaluationStatusNotification;
 use App\Models\Evaluation;
 use Illuminate\Contracts\View\Factory;
@@ -9,10 +10,11 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class EvaluationController extends Controller
 {
+    use DecidesRequests;
+
     private const LIMIT = 10;
 
     /**
@@ -41,13 +43,8 @@ class EvaluationController extends Controller
     public function accept($id): RedirectResponse
     {
         $evaluation = Evaluation::findOrFail($id);
-        $evaluation->status = 1;
-        $evaluation->save();
 
-        // Send notification email
-        Mail::to($evaluation->user->email)->send(new EvaluationStatusNotification($evaluation, 1));
-
-        return redirect()->route('evaluation-management.index')->with('success', 'Evaluation ' . $evaluation->title . ' ' . ($evaluation->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($evaluation, self::ACCEPTED, EvaluationStatusNotification::class, 'evaluation-management.index', __('Evaluation request') . ' "' . $evaluation->title . '"');
     }
 
     /**
@@ -57,13 +54,8 @@ class EvaluationController extends Controller
     public function reject($id): RedirectResponse
     {
         $evaluation = Evaluation::findOrFail($id);
-        $evaluation->status = 2;
-        $evaluation->save();
 
-        // Send notification email
-        Mail::to($evaluation->user->email)->send(new EvaluationStatusNotification($evaluation, 2));
-
-        return redirect()->route('evaluation-management.index')->with('success', 'Evaluation ' . $evaluation->title . ' ' . ($evaluation->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($evaluation, self::REJECTED, EvaluationStatusNotification::class, 'evaluation-management.index', __('Evaluation request') . ' "' . $evaluation->title . '"');
     }
 
     /**

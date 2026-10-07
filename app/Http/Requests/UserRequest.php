@@ -24,23 +24,23 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstname' => 'required|string|max:100|regex:/^[a-zA-Z]+$/',
-            'lastname' => 'required|string|max:100|regex:/^[a-zA-Z]+$/',
+            'firstname' => ['required', 'string', 'max:100', "regex:/^[\pL][\pL\s'\-]*$/u"],
+            'lastname' => ['required', 'string', 'max:100', "regex:/^[\pL][\pL\s'\-]*$/u"],
             'phone' => 'nullable|regex:/^\+212\s[67]\d{8}$/|'.Rule::unique(User::class)->ignore($this->id),
             'sexe' => 'nullable|string|in:male,female',
             'dob' => 'nullable|date|before:18 years ago',
-            'role' => 'string|in:admin,collaborator',
+            'role' => 'required|string|in:admin,collaborator',
             'email' => 'required|string|email|max:255|'.Rule::unique(User::class)->ignore($this->id),
             'job_title' => 'nullable|string|max:100',
-            'avatar' => 'mimes:png,jpg,jpeg|max:1024',
+            'avatar' => 'nullable|mimes:png,jpg,jpeg|max:1024',
             'password' => 'required|string|min:8|confirmed',
         ];
     }
     public function messages()
     {
         return [
-            'firstname.regex' => 'The :attribute field should only contain alphabetic characters.',
-            'lastname.regex' => 'The :attribute field should only contain alphabetic characters.',
+            'firstname.regex' => 'The :attribute field may only contain letters, spaces, hyphens and apostrophes.',
+            'lastname.regex' => 'The :attribute field may only contain letters, spaces, hyphens and apostrophes.',
             'dob.before' => 'You must be at least 18 years old.',
         ];
     }

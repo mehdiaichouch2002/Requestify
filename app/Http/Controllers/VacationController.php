@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\DecidesRequests;
+use App\Http\Controllers\Concerns\StoresAttachments;
 use App\Mail\VacationStatusNotification;
 use App\Models\Vacation;
 
@@ -10,11 +12,13 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class VacationController extends Controller
 {
+    use DecidesRequests;
+    use StoresAttachments;
+
     private const PUBLIC_PATH = 'public/documents';
 
     /**
@@ -47,22 +51,10 @@ class VacationController extends Controller
             'title' => 'required',
             'from' => 'required|date|after_or_equal:today',
             'to' => 'required|date|after_or_equal:today|after_or_equal:from',
-            'attached_file' => 'nullable|file|mimes:pdf,doc,docx,rtf,jpeg,png,jpg|max:2048',
+            'attached_file' => 'nullable|file|mimes:' . self::ATTACHMENT_MIMES . '|max:2048',
         ]);
 
-        $filename = null;
-        if ($request->hasFile('attached_file')) {
-            $file = $request->file('attached_file');
-            $timestamp = time();
-            $extension = $file->getClientOriginalExtension();
-            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-
-            // Limit the filename length to 30 characters
-            $maxLength = 30;
-            $filename = substr($originalName, 0, $maxLength - strlen($timestamp) - strlen($extension) - 1);
-            $filename = $filename . '_' . $timestamp . '.' . $extension;
-            $file->storeAs(self::PUBLIC_PATH, $filename);
-        }
+        $filename = $request->hasFile('attached_file') ? $this->storeAttachment($request->file('attached_file')) : null;
 
         Vacation::create([
             'description' => $request->input('description'),
@@ -111,13 +103,8 @@ class VacationController extends Controller
     public function accept($id): RedirectResponse
     {
         $vacation = Vacation::findOrFail($id);
-        $vacation->status = 1;
-        $vacation->save();
 
-        // Send notification email
-        Mail::to($vacation->user->email)->send(new VacationStatusNotification($vacation, 1));
-
-        return redirect()->route('vacation-management.index')->with('success', 'Vacation ' . $vacation->title . ' ' . ($vacation->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($vacation, self::ACCEPTED, VacationStatusNotification::class, 'vacation-management.index', __('Leave request') . ' "' . $vacation->title . '"');
     }
 
     /**
@@ -127,12 +114,7 @@ class VacationController extends Controller
     public function reject($id): RedirectResponse
     {
         $vacation = Vacation::findOrFail($id);
-        $vacation->status = 2;
-        $vacation->save();
 
-        // Send notification email
-        Mail::to($vacation->user->email)->send(new VacationStatusNotification($vacation, 2));
-
-        return redirect()->route('vacation-management.index')->with('success', 'vacation ' . $vacation->title . ' ' . ($vacation->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($vacation, self::REJECTED, VacationStatusNotification::class, 'vacation-management.index', __('Leave request') . ' "' . $vacation->title . '"');
     }
 }

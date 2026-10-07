@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\DecidesRequests;
+use App\Http\Controllers\Concerns\StoresAttachments;
 use App\Http\Requests\DocumentRequest;
 use App\Mail\DocumentStatusNotification;
 use App\Models\Document;
@@ -9,11 +11,13 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class DocumentController extends Controller
 {
+    use DecidesRequests;
+    use StoresAttachments;
+
     private const LIMIT = 10;
     private const PUBLIC_PATH = 'public/documents';
     /**
@@ -48,15 +52,7 @@ class DocumentController extends Controller
             $attachedFiles = [];
 
             foreach ($files as $file) {
-                $timestamp = time();
-                $extension = $file->getClientOriginalExtension();
-                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-
-                // Limit the filename length to 30 characters
-                $maxLength = 30;
-                $filename = substr($originalName, 0, $maxLength - strlen($timestamp) - strlen($extension) - 1);
-                $filename = $filename . '_' . $timestamp . '.' . $extension;
-                $file->storeAs(self::PUBLIC_PATH, $filename);
+                $filename = $this->storeAttachment($file);
                 $attachedFiles[] = $filename;
             }
         }
@@ -81,13 +77,8 @@ class DocumentController extends Controller
     public function accept($id): RedirectResponse
     {
         $document = Document::findOrFail($id);
-        $document->status = 1;
-        $document->save();
 
-        // Send notification email
-        Mail::to($document->user->email)->send(new DocumentStatusNotification($document, 1));
-
-        return redirect()->route('document-management.index')->with('success', 'Document ' . $document->title . ' ' . ($document->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($document, self::ACCEPTED, DocumentStatusNotification::class, 'document-management.index', __('Document request') . ' "' . $document->title . '"');
     }
 
     /**
@@ -97,13 +88,8 @@ class DocumentController extends Controller
     public function reject($id): RedirectResponse
     {
         $document = Document::findOrFail($id);
-        $document->status = 2;
-        $document->save();
 
-        // Send notification email
-        Mail::to($document->user->email)->send(new DocumentStatusNotification($document, 2));
-
-        return redirect()->route('document-management.index')->with('success', 'Document ' . $document->title . ' ' . ($document->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return $this->decide($document, self::REJECTED, DocumentStatusNotification::class, 'document-management.index', __('Document request') . ' "' . $document->title . '"');
     }
 
     /**

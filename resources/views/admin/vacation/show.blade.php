@@ -98,13 +98,7 @@
                             <x-field-label>{{ __('Duration') }}</x-field-label>
                             <div
                                 class="rq-value">
-                                @php
-                                    $from = strtotime($vacation->from);
-                                    $to = strtotime($vacation->to);
-                                    $duration = $to - $from;
-                                    $days = floor($duration / (60 * 60 * 24));
-                                @endphp
-                                {{ $days }}{{ $days > 1 ? ' days' : __(' day') }}
+                                {{ trans_choice(':count day|:count days', $vacation->days()) }}
                             </div>
                         </div>
                     </div>
