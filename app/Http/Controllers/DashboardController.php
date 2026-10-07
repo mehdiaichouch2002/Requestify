@@ -22,11 +22,11 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         if ($user->isAdmin() || $user->isSuperAdmin()) {
-            $documentPendings = Document::where('status', 0)->get();
-            $homeworkPendings = Homework::where('status', 0)->get();
-            $vacationPendings = Vacation::where('status', 0)->get();
-            $materialPendings = Material::where('status', 0)->get();
-            $evaluationPendings = Evaluation::where('status', 0)->get();
+            $documentPendings = Document::with('user')->where('status', 0)->get();
+            $homeworkPendings = Homework::with('user')->where('status', 0)->get();
+            $vacationPendings = Vacation::with('user')->where('status', 0)->get();
+            $materialPendings = Material::with('user')->where('status', 0)->get();
+            $evaluationPendings = Evaluation::with('user')->where('status', 0)->get();
             return view('admin.dashboard', compact('documentPendings', 'homeworkPendings', 'vacationPendings', 'materialPendings', 'evaluationPendings'));
         } else {
             $oneWeekAgo = Carbon::now()->subWeek();
@@ -84,11 +84,11 @@ class DashboardController extends Controller
 
             return view('collaborator.history', compact('documentPendings', 'homeworkPendings', 'vacationPendings', 'materialPendings', 'evaluationPendings'));
         } else {
-            $documentPendings = Document::all();
-            $homeworkPendings = Homework::all();
-            $vacationPendings = Vacation::all();
-            $materialPendings = Material::all();
-            $evaluationPendings = Evaluation::all();
+            $documentPendings = Document::with('user')->get();
+            $homeworkPendings = Homework::with('user')->get();
+            $vacationPendings = Vacation::with('user')->get();
+            $materialPendings = Material::with('user')->get();
+            $evaluationPendings = Evaluation::with('user')->get();
 
             return view('admin.history', compact('documentPendings', 'homeworkPendings', 'vacationPendings', 'materialPendings', 'evaluationPendings'));
         }

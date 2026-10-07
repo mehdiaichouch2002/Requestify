@@ -25,7 +25,7 @@ class DocumentController extends Controller
      */
     public  function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $documents = Document::paginate(self::LIMIT);
+        $documents = Document::with('user')->paginate(self::LIMIT);
         return view('admin.document_management.index',compact('documents'));
     }
 

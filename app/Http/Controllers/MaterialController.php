@@ -28,7 +28,7 @@ class MaterialController extends Controller
      */
     public function index(): View|Application|Factory
     {
-        $materials = Material::paginate(self::LIMIT);
+        $materials = Material::with('user')->paginate(self::LIMIT);
         return view('admin.material_management.index', compact('materials'));
     }
 

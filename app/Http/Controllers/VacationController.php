@@ -26,7 +26,7 @@ class VacationController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $data = Vacation::all();
+        $data = Vacation::with('user')->get();
         return view('admin.vacation.index', ['data' => $data]);
     }
 

@@ -271,4 +271,34 @@ class CrudAuditTest extends TestCase
             ->assertSee('<img src="' . asset('storage/documents/' . $image) . '"', false)
             ->assertSee('href="' . asset('storage/documents/' . $pdf) . '" download', false);
     }
+
+    public function test_two_avatars_uploaded_in_the_same_second_do_not_overwrite_each_other(): void
+    {
+        $other = User::factory()->create();
+        foreach ([$this->collaborator, $other] as $user) {
+            $this->actingAs($user)->patch('/profile', [
+                'firstname' => $user->firstname, 'lastname' => $user->lastname, 'email' => $user->email,
+                'avatar' => UploadedFile::fake()->image('me.png'),
+            ]);
+        }
+
+        $this->assertNotSame($this->collaborator->fresh()->avatar, $other->fresh()->avatar);
+    }
+
+    public function test_hr_lists_load_people_in_one_query(): void
+    {
+        foreach (range(1, 15) as $i) {
+            $this->requests();
+            User::factory()->create(); // a fresh owner each round would add queries per row without eager loading
+        }
+        $this->actingAs($this->admin);
+
+        foreach (['dashboard', 'admin-history', 'vacation-management.index', 'homework-management.index',
+            'document-management.index', 'material-management.index', 'evaluation-management.index'] as $route) {
+            \DB::enableQueryLog();
+            \DB::flushQueryLog();
+            $this->get(route($route))->assertOk();
+            $this->assertLessThan(25, count(\DB::getQueryLog()), $route);
+        }
+    }
 }

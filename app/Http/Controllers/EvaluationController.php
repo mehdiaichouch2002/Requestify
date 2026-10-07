@@ -22,7 +22,7 @@ class EvaluationController extends Controller
      */
     public function index(): View|Application|Factory|\Illuminate\Contracts\Foundation\Application
     {
-        $evaluations = Evaluation::paginate(self::LIMIT);
+        $evaluations = Evaluation::with('user')->paginate(self::LIMIT);
         return view('admin.evaluation_management.index', compact('evaluations'));
     }
 

@@ -19,7 +19,7 @@ class HomeworkController extends Controller
 
     public function index()
     {
-        $data = Homework::all();
+        $data = Homework::with('user')->get();
         return view('admin.home_office.index', ['data' => $data]);
     }
     public function create()

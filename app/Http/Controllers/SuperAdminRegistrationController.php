@@ -53,7 +53,7 @@ class SuperAdminRegistrationController extends Controller
         $nomPhoto = null;
         if (isset($request->avatar)) {
             // Generate a unique name for the uploaded avatar file
-            $nomPhoto = time().'.'.$request->avatar->extension();
+            $nomPhoto = $request->avatar->hashName();
             // Store the uploaded avatar file in the 'photos' directory
             $request->avatar->storeAs(self::PUBLIC_PATH, $nomPhoto);
         }

@@ -36,7 +36,7 @@ class ProfileController extends Controller
             $request->user()->email_verified_at = null;
         }
         if($request->hasFile('avatar')){
-            $nomPhoto = time().'.'.$request->avatar->extension();
+            $nomPhoto = $request->avatar->hashName();
 
             $request->avatar->storeAs(self::PUBLIC_PATH, $nomPhoto);
             if ($old_avatar){
