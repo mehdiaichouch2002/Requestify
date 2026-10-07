@@ -38,7 +38,7 @@ class ProfileController extends Controller
         if($request->hasFile('avatar')){
             $nomPhoto = time().'.'.$request->avatar->extension();
 
-            $request->avatar->storeAs(self::PUBLIC_PATH. $nomPhoto);
+            $request->avatar->storeAs(self::PUBLIC_PATH, $nomPhoto);
             if ($old_avatar){
                 Storage::delete(self::PUBLIC_PATH. $old_avatar);
 

@@ -20,9 +20,9 @@ class ProfileUpdateRequest extends FormRequest
             'lastname' => 'required|string|max:100|regex:/^[a-zA-Z]+$/',
             'phone' => 'nullable|regex:/^\+212\s[67]\d{8}$/|'.Rule::unique(User::class)->ignore($this->user()->id),
             'dob' => 'nullable|date|before:18 years ago',
-            'email' => 'required|string|email|max:255|',Rule::unique(User::class)->ignore($this->user()->id),
+            'email' => 'required|string|email|max:255|'.Rule::unique(User::class)->ignore($this->user()->id),
             'job_title' => 'nullable|string|max:100',
-            'avatar' => 'mimes:png,jpg,jpeg|max:1024',
+            'avatar' => 'nullable|mimes:png,jpg,jpeg|max:1024',
             ];
     }
 }

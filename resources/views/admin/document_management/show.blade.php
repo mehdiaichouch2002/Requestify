@@ -133,12 +133,7 @@
                             </table>
                         </div>
                         @if ($document->status === 0)
-                            <div class="flex mt-10 justify-end">
-                                <x-success-link href="{{ route('document-management.accept', $document->id) }}"
-                                    class="mr-1">{{ __('Accept') }}</x-success-link>
-                                <x-danger-link
-                                    href="{{ route('document-management.reject', $document->id) }}">{{ __('Reject') }}</x-danger-link>
-                            </div>
+                            <x-status-actions :accept="route('document-management.accept', $document->id)" :reject="route('document-management.reject', $document->id)" />
                         @endif
                     </div>
                 </div>

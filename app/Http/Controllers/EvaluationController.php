@@ -85,6 +85,7 @@ class EvaluationController extends Controller
             'title' => 'required',
             'description' => 'required',
             'day' => 'required|date|after_or_equal:today',
+            'time' => 'required|date_format:H:i',
         ]);
 
         $evaluation = Evaluation::create([

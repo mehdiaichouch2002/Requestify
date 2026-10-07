@@ -137,12 +137,7 @@
                             </table>
                         </div>
                         @if ($material->status === 0)
-                            <div class="flex mt-10 justify-end">
-                                <x-success-link href="{{ route('material-management.accept', $material->id) }}"
-                                    class="mr-1">{{ __('Accept') }}</x-success-link>
-                                <x-danger-link
-                                    href="{{ route('material-management.reject', $material->id) }}">{{ __('Reject') }}</x-danger-link>
-                            </div>
+                            <x-status-actions :accept="route('material-management.accept', $material->id)" :reject="route('material-management.reject', $material->id)" />
                         @endif
                     </div>
                 </div>

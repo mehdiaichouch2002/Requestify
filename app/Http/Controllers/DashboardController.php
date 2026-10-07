@@ -34,35 +34,35 @@ class DashboardController extends Controller
             $documentPendings = Document::where('user_id', $user->id)
                 ->where(function ($query) use ($oneWeekAgo) {
                     $query->where('status', 0)
-                        ->orWhere('updated_at', '<=', $oneWeekAgo);
+                        ->orWhere('updated_at', '>=', $oneWeekAgo);
                 })
                 ->get();
 
             $homeworkPendings = Homework::where('user_id', $user->id)
                 ->where(function ($query) use ($oneWeekAgo) {
                     $query->where('status', 0)
-                        ->orWhere('updated_at', '<=', $oneWeekAgo);
+                        ->orWhere('updated_at', '>=', $oneWeekAgo);
                 })
                 ->get();
 
             $vacationPendings = Vacation::where('user_id', $user->id)
                 ->where(function ($query) use ($oneWeekAgo) {
                     $query->where('status', 0)
-                        ->orWhere('updated_at', '<=', $oneWeekAgo);
+                        ->orWhere('updated_at', '>=', $oneWeekAgo);
                 })
                 ->get();
 
             $materialPendings = Material::where('user_id', $user->id)
                 ->where(function ($query) use ($oneWeekAgo) {
                     $query->where('status', 0)
-                        ->orWhere('updated_at', '<=', $oneWeekAgo);
+                        ->orWhere('updated_at', '>=', $oneWeekAgo);
                 })
                 ->get();
 
             $evaluationPendings = Evaluation::where('user_id', $user->id)
                 ->where(function ($query) use ($oneWeekAgo) {
                     $query->where('status', 0)
-                        ->orWhere('updated_at', '<=', $oneWeekAgo);
+                        ->orWhere('updated_at', '>=', $oneWeekAgo);
                 })
                 ->get();
 

@@ -66,20 +66,11 @@ class HomeworkController extends Controller
 //return message success:
             return redirect()->route('dashboard')->with('success', 'Les données ont été enregistrées avec succès.');
     }
-    public function update(Request $request, $id)
-    {
-        $role = $request->input('role');
-        $user = Homework::findOrFail($id);
-        $user->role = $role;
-        $user->save();
-
-        return redirect()->back()->with('success','Role updated to ' . $role);
-    }
     public function destroy($id)
     {
         $homework=Homework::findOrFail($id);
         $homework->delete();
-        return redirect()->route('homework-management.index')->with('success', $homework->firstname . ' ' . $homework->lastname . ' deleted successfully.');
+        return redirect()->route('homework-management.index')->with('success', 'Remote work request deleted successfully.');
     }
     public function show($id)
     {
@@ -100,7 +91,7 @@ class HomeworkController extends Controller
         // Send notification email
         Mail::to($homework->user->email)->send(new HomeworkStatusNotification($homework, 1));
 
-        return redirect()->route('homework-management.index')->with('success', 'Homework ' . $homework->title . ' ' . ($homework->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return redirect()->route('homework-management.index')->with('success', 'Remote work request ' . ($homework->status === 1 ? 'accepted' : 'rejected') . ' successfully');
     }
 
     /**
@@ -116,7 +107,7 @@ class HomeworkController extends Controller
         // Send notification email
         Mail::to($homework->user->email)->send(new HomeworkStatusNotification($homework, 2));
 
-        return redirect()->route('homework-management.index')->with('success', 'Homework ' . $homework->title . ' ' . ($homework->status === 1 ? 'accepted' : 'rejected') . ' successfully');
+        return redirect()->route('homework-management.index')->with('success', 'Remote work request ' . ($homework->status === 1 ? 'accepted' : 'rejected') . ' successfully');
     }
     }
 

@@ -69,28 +69,23 @@ Route::prefix('evaluation-request')->name('evaluation-request.')->group(function
 Route::get('/collaborator-history', [DashboardController::class, 'history'])->name('collaborator-history');
 
 });
-Route::middleware('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->group(function () {
     // homework management:
     Route::prefix('homework-management')->name('homework-management.')->group(function () {
         Route::get('/', [HomeworkController::class, 'index'])->name('index');
-        Route::get('/create', function () {
-            return view('formulaire');
-        })->name('create');
         Route::get('/show/{id}', [HomeworkController::class, 'show'])->name('show');
         Route::delete('/{id}', [HomeworkController::class, 'destroy'])->name('destroy');
-        Route::get('/{id}/accept', [HomeworkController::class, 'accept'])->name('accept');
-        Route::get('/{id}/reject', [HomeworkController::class, 'reject'])->name('reject');
-        Route::post('/create', [HomeworkController::class, 'formulaire'])->name('save');
+        Route::patch('/{id}/accept', [HomeworkController::class, 'accept'])->name('accept');
+        Route::patch('/{id}/reject', [HomeworkController::class, 'reject'])->name('reject');
     });
 
     // vacation management:
     Route::prefix('vacation-management')->name('vacation-management.')->group(function () {
         Route::get('/', [VacationController::class, 'index'])->name('index');
         Route::get('/show/{id}', [VacationController::class, 'show'])->name('show');
-        Route::patch('/{id}', [VacationController::class, 'update'])->name('update');
         Route::delete('/{id}', [VacationController::class, 'destroy'])->name('destroy');
-        Route::get('/{id}/accept', [VacationController::class, 'accept'])->name('accept');
-        Route::get('/{id}/reject', [VacationController::class, 'reject'])->name('reject');
+        Route::patch('/{id}/accept', [VacationController::class, 'accept'])->name('accept');
+        Route::patch('/{id}/reject', [VacationController::class, 'reject'])->name('reject');
     });
 
     // user-management routes:
@@ -107,8 +102,8 @@ Route::middleware('admin')->group(function () {
     Route::prefix('document-management')->name('document-management.')->group(function () {
         Route::get('/', [DocumentController::class, 'index'])->name('index');
         Route::get('/{id}/show', [DocumentController::class, 'show'])->name('show');
-        Route::get('/{id}/accept', [DocumentController::class, 'accept'])->name('accept');
-        Route::get('/{id}/reject', [DocumentController::class, 'reject'])->name('reject');
+        Route::patch('/{id}/accept', [DocumentController::class, 'accept'])->name('accept');
+        Route::patch('/{id}/reject', [DocumentController::class, 'reject'])->name('reject');
         Route::delete('/{id}', [DocumentController::class, 'destroy'])->name('destroy');
     });
 
@@ -116,8 +111,8 @@ Route::middleware('admin')->group(function () {
     Route::prefix('material-management')->name('material-management.')->group(function () {
         Route::get('/', [MaterialController::class, 'index'])->name('index');
         Route::get('/{id}/show', [MaterialController::class, 'show'])->name('show');
-        Route::get('/{id}/accept', [MaterialController::class, 'accept'])->name('accept');
-        Route::get('/{id}/reject', [MaterialController::class, 'reject'])->name('reject');
+        Route::patch('/{id}/accept', [MaterialController::class, 'accept'])->name('accept');
+        Route::patch('/{id}/reject', [MaterialController::class, 'reject'])->name('reject');
         Route::delete('/{id}', [MaterialController::class, 'destroy'])->name('destroy');
     });
 
@@ -125,8 +120,8 @@ Route::middleware('admin')->group(function () {
     Route::prefix('evaluation-management')->name('evaluation-management.')->group(function () {
         Route::get('/', [EvaluationController::class, 'index'])->name('index');
         Route::get('/{id}/show', [EvaluationController::class, 'show'])->name('show');
-        Route::get('/{id}/accept', [EvaluationController::class, 'accept'])->name('accept');
-        Route::get('/{id}/reject', [EvaluationController::class, 'reject'])->name('reject');
+        Route::patch('/{id}/accept', [EvaluationController::class, 'accept'])->name('accept');
+        Route::patch('/{id}/reject', [EvaluationController::class, 'reject'])->name('reject');
         Route::delete('/{id}', [EvaluationController::class, 'destroy'])->name('destroy');
     });
 

@@ -14,6 +14,7 @@ class Document extends Model
         'description',
         'status',
         'attached_files',
+        'type',
         'user_id',
     ];
 

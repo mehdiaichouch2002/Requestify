@@ -167,12 +167,7 @@
                             </table>
                         </div>
                         @if ($vacation->status === 0)
-                            <div class="flex mt-10 justify-end">
-                                <x-success-link href="{{ route('vacation-management.accept', $vacation->id) }}"
-                                    class="mr-1">{{ __('Accept') }}</x-success-link>
-                                <x-danger-link
-                                    href="{{ route('vacation-management.reject', $vacation->id) }}">{{ __('Reject') }}</x-danger-link>
-                            </div>
+                            <x-status-actions :accept="route('vacation-management.accept', $vacation->id)" :reject="route('vacation-management.reject', $vacation->id)" />
                         @endif
                     </div>
                 </div>

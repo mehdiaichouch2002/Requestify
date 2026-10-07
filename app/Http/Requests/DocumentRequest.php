@@ -23,7 +23,7 @@ class DocumentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => 'required',
+            'type' => 'required|in:payroll statement,work certificate',
             'title' => 'required',
             'description' => 'required',
             'attached_files' => 'array',

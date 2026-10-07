@@ -11,9 +11,12 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class VacationController extends Controller
 {
+    private const PUBLIC_PATH = 'public/documents';
+
     /**
      * @return View|Application|Factory|\Illuminate\Contracts\Foundation\Application
      */
@@ -38,57 +41,40 @@ class VacationController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        // Validation passed, proceed with your logic
-        if ($request->has('is_lifetime')) {
-            $value = true;
-        } else {
-            $value = false;
-        }
-        $nomPhoto = null;
-        if (isset($request->attached_file)) {
-            // Generate a unique name for the uploaded avatar file
-            $nomPhoto = time() . '.' . $request->attached_file->extension();
-
-            $filename = null;
-            if ($request->has('attached_file')) {
-                $value = true;
-            } else {
-                $value = false;
-            }
-            if ($request->hasFile('attached_file')) {
-
-                $file = $request->file('attached_file');
-
-                $timestamp = time();
-                $extension = $file->getClientOriginalExtension();
-                $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-
-                // Limit the filename length to 30 characters
-                $maxLength = 30;
-                $filename = substr($originalName, 0, $maxLength - strlen($timestamp) - strlen($extension) - 1);
-                $filename = $filename . '_' . $timestamp . '.' . $extension;
-                $file->storeAs('public/documents', $filename);
-            }
-        }
-        // Validate the request data
+        // Validate before touching the disk, so a rejected request leaves no orphan file
         $request->validate([
             'description' => 'required',
             'title' => 'required',
             'from' => 'required|date|after_or_equal:today',
             'to' => 'required|date|after_or_equal:today|after_or_equal:from',
-            'paid' => 'required',
+            'attached_file' => 'nullable|file|mimes:pdf,doc,docx,rtf,jpeg,png,jpg|max:2048',
         ]);
-        //create and save date :
-        $entity = Vacation::create([
+
+        $filename = null;
+        if ($request->hasFile('attached_file')) {
+            $file = $request->file('attached_file');
+            $timestamp = time();
+            $extension = $file->getClientOriginalExtension();
+            $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            // Limit the filename length to 30 characters
+            $maxLength = 30;
+            $filename = substr($originalName, 0, $maxLength - strlen($timestamp) - strlen($extension) - 1);
+            $filename = $filename . '_' . $timestamp . '.' . $extension;
+            $file->storeAs(self::PUBLIC_PATH, $filename);
+        }
+
+        Vacation::create([
             'description' => $request->input('description'),
             'title' => $request->input('title'),
             'from' => $request->input('from'),
             'to' => $request->input('to'),
-            'paid' => $value,
-            'user_id' => auth()->user()->id,
-            'attached_file' => $nomPhoto,
+            // Unchecked checkboxes are not sent at all
+            'paid' => $request->boolean('paid'),
+            'user_id' => auth()->id(),
+            'attached_file' => $filename,
         ]);
-        //return message success:
+
         return redirect()->route('dashboard')->with('success', 'Les données ont été enregistrées avec succès.');
     }
 
@@ -97,13 +83,13 @@ class VacationController extends Controller
      * @return RedirectResponse
      */
     public function destroy($id): RedirectResponse
-
     {
         $vacation = Vacation::findOrFail($id);
-        if (isset($vacation->attached_file)) {
+        if ($vacation->attached_file) {
+            Storage::delete(self::PUBLIC_PATH . '/' . $vacation->attached_file);
         }
         $vacation->delete();
-        return redirect()->route('vacation.index')->with('success', $vacation->firstname . ' ' . $vacation->lastname . ' deleted successfully.');
+        return redirect()->route('vacation-management.index')->with('success', $vacation->title . ' deleted successfully.');
     }
 
 

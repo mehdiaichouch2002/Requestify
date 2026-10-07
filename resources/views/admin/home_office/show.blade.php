@@ -125,12 +125,7 @@
                     </div>
                 </div>
                 @if ($homework->status === 0)
-                    <div class="flex mt-10 justify-end">
-                        <x-success-link href="{{ route('homework-management.accept', $homework->id) }}"
-                            class="mr-1">{{ __('Accept') }}</x-success-link>
-                        <x-danger-link
-                            href="{{ route('homework-management.reject', $homework->id) }}">{{ __('Reject') }}</x-danger-link>
-                    </div>
+                    <x-status-actions :accept="route('homework-management.accept', $homework->id)" :reject="route('homework-management.reject', $homework->id)" />
                 @endif
             </div>
         </div>

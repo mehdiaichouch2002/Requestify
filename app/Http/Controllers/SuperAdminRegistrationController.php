@@ -28,7 +28,7 @@ class SuperAdminRegistrationController extends Controller
 
         if ($search) {
             $search = $request->input('search');
-            $data = User::where('firstname', 'like', '%' . $search . '%')->orWhere('lastname', 'like', '%' . $search . '%')->paginate(self::LIMIT);
+            $data = User::where('firstname', 'like', '%' . $search . '%')->orWhere('lastname', 'like', '%' . $search . '%')->paginate(self::LIMIT)->withQueryString();
         } else {
             $data = User::paginate(self::LIMIT);
         }
@@ -81,12 +81,25 @@ class SuperAdminRegistrationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $role = $request->input('role');
+        $request->validate(['role' => 'required|in:admin,collaborator']);
         $user = User::findOrFail($id);
-        $user->role = $role;
+        $this->guardManageable($user);
+
+        $user->role = $request->input('role');
         $user->save();
 
-        return redirect()->back()->with('success','Role updated to ' . $role);
+        return redirect()->back()->with('success', 'Role updated to ' . $user->role);
+    }
+
+    /**
+     * The UI hides these actions for yourself and for the super admin;
+     * enforce the same rule on the server.
+     */
+    private function guardManageable(User $user): void
+    {
+        if ($user->isSuperAdmin() || $user->id === auth()->id()) {
+            abort(403);
+        }
     }
 
     /**
@@ -109,13 +122,10 @@ class SuperAdminRegistrationController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if ($user->isSuperAdmin()) {
-            abort(404);
-        }
+        $this->guardManageable($user);
 
-        $avatar = optional($user->avatar);
-        if ($avatar) {
-            Storage::delete(self::PUBLIC_PATH .'/'.$avatar);
+        if ($user->avatar) {
+            Storage::delete(self::PUBLIC_PATH .'/'.$user->avatar);
         }
 
         $user->delete();
