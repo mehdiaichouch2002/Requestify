@@ -1,4 +1,3 @@
-@props(['value'])
 <div x-data="{ show: true }" x-show="show" x-transition.opacity role="status"
      class="mt-5 mb-3 flex items-start justify-between gap-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
     <span class="flex items-center gap-2">

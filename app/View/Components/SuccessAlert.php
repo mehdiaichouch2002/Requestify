@@ -9,11 +9,11 @@ use Illuminate\View\Component;
 class SuccessAlert extends Component
 {
     /**
-     * Create a new component instance.
+     * Taken here rather than with @props: Blade escapes bound attributes once on
+     * the way in, so the view's {{ $value }} showed quotes as &quot;
      */
-    public function __construct()
+    public function __construct(public string $value)
     {
-        //
     }
 
     /**

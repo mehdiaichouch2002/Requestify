@@ -5,14 +5,16 @@ Requestify is an internal tool where employees send HR requests and managers app
 Employees (collaborators) can request:
 
 - **Documents**: payroll statements and work certificates, with attachments
-- **Equipment** (material)
+- **Equipment** (material), with an optional attachment
 - **Leave** (paid or unpaid), with an optional attachment
 - **Remote work**: for a period, or permanently
 - **Evaluations**: an appraisal meeting on a chosen day and time
 
+Attachments can be PDF, Word, RTF, JPEG or PNG files up to 2 MB. Images are previewed on the request page; other files are linked.
+
 The dashboard shows a collaborator's pending requests and the decisions from the last 7 days. A history page lists all of their requests.
 
-Admins review and approve or reject requests, and manage users. The **super admin** account is created from the command line and can't be edited or deleted from the app.
+Admins review and approve or reject requests, and manage users. A decision is final: once a request is accepted or rejected it can't be changed, even if two admins act on it at the same moment. The **super admin** account is created from the command line and can't be edited or deleted from the app.
 
 Built with Laravel 12, Blade, Tailwind CSS, Alpine.js and Vite.
 
@@ -55,7 +57,9 @@ php artisan test
 The tests run on in-memory SQLite and don't send real emails. They cover:
 
 - authentication and the profile page
-- every request type
-- approve/reject and the notification email
-- role permissions in user management
+- every request type: create, view, approve/reject and delete
+- decisions being final, including two decisions at once
+- the notification emails, and a failing mail server not blocking a decision
+- uploads: allowed types, unique file names, image previews
+- user management: creating users, avatars and role permissions
 - the dashboard's 7-day window

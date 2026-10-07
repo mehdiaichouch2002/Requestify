@@ -86,6 +86,17 @@ class CrudAuditTest extends TestCase
         Mail::assertSentCount(5);
     }
 
+    public function test_the_decision_message_shows_quotes_as_typed(): void
+    {
+        $vacation = $this->requests()['vacation-management'];
+        $vacation->update(['title' => 'Family visit in Agadir']);
+
+        $this->actingAs($this->admin)->followingRedirects()
+            ->patch(route('vacation-management.accept', $vacation->id))
+            ->assertSee('Leave request "Family visit in Agadir" accepted.')
+            ->assertDontSee('&amp;quot;', false);
+    }
+
     public function test_a_concurrent_second_decision_is_refused(): void
     {
         $document = $this->requests()['document-management'];
